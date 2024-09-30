@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leaderboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    table {
+      width: 80%;
+      margin: 50px auto;
+      border-collapse: collapse;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    tr:nth-child(1) {
+      background-color: #FFD700; /* Gold */
+    }
+
+    tr:nth-child(2) {
+      background-color: #C0C0C0; /* Silver */
+    }
+
+    tr:nth-child(3) {
+      background-color: #CD7F32; /* Bronze */
+    }
+  </style>
+</head>
+<body>
+  <h1>Leaderboard</h1>
+  <table id="leaderboard">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Total Sent</th>
+        <th>Last Send</th>
+        <th>Date of Last Send</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Leaderboard data will be dynamically added here -->
+    </tbody>
+  </table>
+
+  <script>
+    // Sample leaderboard data
+    const leaderboardData = [
+      { id: '204933F', totalSent: 70, lastSend: 20, lastSendDate: '9/28/2024' },
+      { id: '332048F', totalSent: 50, lastSend: 30, lastSendDate: '9/23/2024' },
+      { id: '304906F', totalSent: 10, lastSend: 10, lastSendDate: '9/23/2024' },
+      { id: '902068F', totalSent: 65, lastSend: 40, lastSendDate: '9/26/2024' },
+      { id: '601055F', totalSent: 110, lastSend: 50, lastSendDate: '9/30/2024'},
+      { id: '301011F', totalSent: 10, lastSend: 10, lastSendDate: '9/28/2024'},
+      { id: '701028F', totalSent: 15, lastSend: 15, lastSendDate: '9/26/2024'}
+    ];
+
+    // Function to sort the leaderboard data
+    function sortLeaderboard() {
+      leaderboardData.sort((a, b) => b.totalSent - a.totalSent);
+      updateLeaderboard();
+    }
+
+    // Function to update the leaderboard table
+    function updateLeaderboard() {
+      const tableBody = document.getElementById('leaderboard').getElementsByTagName('tbody')[0];
+      tableBody.innerHTML = '';
+
+      for (let i = 0; i < leaderboardData.length; i++) {
+        const row = document.createElement('tr');
+
+        const idCell = document.createElement('td');
+        idCell.textContent = leaderboardData[i].id;
+        row.appendChild(idCell);
+
+        const totalSentCell = document.createElement('td');
+        totalSentCell.textContent = leaderboardData[i].totalSent;
+        row.appendChild(totalSentCell);
+
+        const lastSendCell = document.createElement('td');
+        lastSendCell.textContent = leaderboardData[i].lastSend;
+        row.appendChild(lastSendCell);
+
+        const lastSendDateCell = document.createElement('td');
+        lastSendDateCell.textContent = leaderboardData[i].lastSendDate;
+        row.appendChild(lastSendDateCell);
+
+        tableBody.appendChild(row);
+      }
+    }
+
+    // Sort the leaderboard data and update the table
+    sortLeaderboard();
+  </script>
+</body>
+</html>
