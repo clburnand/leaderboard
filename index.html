@@ -13,6 +13,13 @@
       margin-top: 50px;
     }
 
+    .total-received {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
     table {
       width: 80%;
       margin: 50px auto;
@@ -46,6 +53,7 @@
 </head>
 <body>
   <h1>Leaderboard</h1>
+  <div class="total-received" id="totalReceived"></div>
   <table id="leaderboard">
     <thead>
       <tr>
@@ -78,6 +86,7 @@
     function sortLeaderboard() {
       leaderboardData.sort((a, b) => b.totalSent - a.totalSent);
       updateLeaderboard();
+      updateTotalReceived();
     }
 
     // Function to update the leaderboard table
@@ -106,6 +115,12 @@
 
         tableBody.appendChild(row);
       }
+    }
+
+    // Function to calculate and display total received
+    function updateTotalReceived() {
+      const totalReceived = leaderboardData.reduce((total, entry) => total + entry.totalSent, 0);
+      document.getElementById('totalReceived').textContent = `Total Received: ${totalReceived}`;
     }
 
     // Sort the leaderboard data and update the table
