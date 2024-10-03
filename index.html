@@ -87,49 +87,41 @@
       
     ];
 
-    // Function to sort the leaderboard data
-    function sortLeaderboard() {
-      leaderboardData.sort((a, b) => b.totalSent - a.totalSent);
-      updateLeaderboard();
-      updateTotalReceived();
-    }
+  // Function to update the leaderboard table
+function updateLeaderboard() {
+  const tableBody = document.getElementById('leaderboard').getElementsByTagName('tbody')[0];
+  tableBody.innerHTML = '';
 
-    // Function to update the leaderboard table
-    function updateLeaderboard() {
-      const tableBody = document.getElementById('leaderboard').getElementsByTagName('tbody')[0];
-      tableBody.innerHTML = '';
+  for (let i = 0; i < leaderboardData.length; i++) {
+    const row = document.createElement('tr');
 
-      for (let i = 0; i < leaderboardData.length; i++) {
-        const row = document.createElement('tr');
+    const idCell = document.createElement('td');
+    idCell.textContent = leaderboardData[i].id;
+    row.appendChild(idCell);
 
-        const idCell = document.createElement('td');
-        idCell.textContent = leaderboardData[i].id;
-        row.appendChild(idCell);
+    const totalSentCell = document.createElement('td');
+    totalSentCell.textContent = leaderboardData[i].totalSent.toFixed(2); // Format to 2 decimal places
+    row.appendChild(totalSentCell);
 
-        const totalSentCell = document.createElement('td');
-        totalSentCell.textContent = leaderboardData[i].totalSent;
-        row.appendChild(totalSentCell);
+    const lastSendCell = document.createElement('td');
+    lastSendCell.textContent = leaderboardData[i].lastSend.toFixed(2); // Format to 2 decimal places
+    row.appendChild(lastSendCell);
 
-        const lastSendCell = document.createElement('td');
-        lastSendCell.textContent = leaderboardData[i].lastSend;
-        row.appendChild(lastSendCell);
+    const lastSendDateCell = document.createElement('td');
+    lastSendDateCell.textContent = leaderboardData[i].lastSendDate;
+    row.appendChild(lastSendDateCell);
 
-        const lastSendDateCell = document.createElement('td');
-        lastSendDateCell.textContent = leaderboardData[i].lastSendDate;
-        row.appendChild(lastSendDateCell);
+    tableBody.appendChild(row);
+  }
+}
 
-        tableBody.appendChild(row);
-      }
-    }
+// Function to calculate and display total received
+function updateTotalReceived() {
+  const totalReceived = leaderboardData.reduce((total, entry) => total + entry.totalSent, 0);
+  document.getElementById('totalReceived').textContent = `Total Received: ${totalReceived.toFixed(2)}`; // Format to 2 decimal places
+}
 
-    // Function to calculate and display total received
-    function updateTotalReceived() {
-      const totalReceived = leaderboardData.reduce((total, entry) => total + entry.totalSent, 0);
-      document.getElementById('totalReceived').textContent = `Total Received: ${totalReceived}`;
-    }
 
-    // Sort the leaderboard data and update the table
-    sortLeaderboard();
   </script>
 </body>
 </html>
