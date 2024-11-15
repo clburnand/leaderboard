@@ -1,131 +1,609 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Leaderboard</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User-Based Financial Analytics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/inter-ui/3.19.3/inter.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.36.3/apexcharts.min.css">
+    <style>
+        /* All existing styles remain the same */
+        :root {
+            --primary: #2563eb;
+            --surface: #ffffff;
+            --background: #f8fafc;
+            --text: #0f172a;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --success: #22c55e;
+            --error: #ef4444;
+        }
 
-    h1 {
-      text-align: center;
-      margin-top: 50px;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
 
-    .total-received {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 20px;
-      font-weight: bold;
-    }
+        body {
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+        }
 
-    table {
-      width: 80%;
-      margin: 50px auto;
-      border-collapse: collapse;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    }
+        .container {
+            padding: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-    th, td {
-      padding: 15px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
 
-    th {
-      background-color: #4CAF50;
-      color: white;
-    }
+        .title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
 
-    tr:nth-child(1) {
-      background-color: #FFD700; /* Gold */
-    }
+        .alert {
+            background: #eff6ff;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    tr:nth-child(2) {
-      background-color: #C0C0C0; /* Silver */
-    }
+        .alert-dismiss {
+            color: var(--primary);
+            text-decoration: underline;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
 
-    tr:nth-child(3) {
-      background-color: #CD7F32; /* Bronze */
-    }
-  </style>
+        .card {
+            background: var(--surface);
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .metric-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .metric-value {
+            font-size: 1.875rem;
+            font-weight: 600;
+        }
+
+        .metric-change {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .metric-change.positive {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .metric-change.negative {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .tab-group {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--surface);
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .chart-container {
+            margin-top: 1rem;
+            height: 300px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge.user-id {
+            background: #f1f5f9;
+            color: var(--text);
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .card {
+                padding: 1rem;
+            }
+
+            .metric-value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>Leaderboard</h1>
-  <div class="total-received" id="totalReceived"></div>
-  <table id="leaderboard">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Total Sent</th>
-        <th>Last Send</th>
-        <th>Date of Last Send</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Leaderboard data will be dynamically added here -->
-    </tbody>
-  </table>
+    <div class="container">
+        <header class="header">
+            <div class="tab-group">
+                <button class="tab active" onclick="updatePeriod('7d')">7D</button>
+                <button class="tab" onclick="updatePeriod('30d')">30D</button>
+                <button class="tab" onclick="updatePeriod('1y')">1Y</button>
+            </div>
+        </header>
 
-  <script>
-    // Sample leaderboard data
-    const leaderboardData = [
-      { id: '204933F', totalSent: 70.00, lastSend: 20.00, lastSendDate: '9/28/2024' },
-      { id: '332048F', totalSent: 50.00, lastSend: 30.00, lastSendDate: '9/23/2024' },
-      { id: '304906F', totalSent: 10.00, lastSend: 10.00, lastSendDate: '9/23/2024' },
-      { id: '902068F', totalSent: 65.00, lastSend: 40.00, lastSendDate: '9/26/2024' },
-      { id: '601055F', totalSent: 110.00, lastSend: 50.00, lastSendDate: '9/30/2024'},
-      { id: '301011F', totalSent: 10.00, lastSend: 10.00, lastSendDate: '9/28/2024'},
-      { id: '701028F', totalSent: 15.00, lastSend: 15.00, lastSendDate: '9/26/2024'},
-      { id: '664548F', totalSent: 25.00, lastSend: 25.00, lastSendDate: '9/30/2024'},
-      { id: '112031F', totalSent: 10.00, lastSend: 10.00, lastSendDate: '9/30/2024'},
-      { id: '301906F', totalSent: 138.11, lastSend: 19.67, lastSendDate: '10/3/2024'},
-      { id: '731025F', totalSent: 18.00, lastSend: 18.00, lastSendDate: '10/3/2024'},
-      { id: '613215F', totalSent: 20.00, lastSend: 10.00, lastSendDate: '10/3/2024'},
-      { id: '102012F', totalSent: 25.00, lastSend: 25.00, lastSendDate: '10/1/2024'}
-    ];
 
-    // Function to update the leaderboard table
-    function updateLeaderboard() {
-      // Sort the leaderboard data by totalSent in descending order
-      leaderboardData.sort((a, b) => b.totalSent - a.totalSent);
+        <div class="grid">
+            <div class="card">
+                <div class="metric">
+                    <div class="metric-content">
+                        <span class="metric-label">Daily Total</span>
+                        <span class="metric-value" id="daily-total">-</span>
+                    </div>
+                    <span class="metric-change" id="daily-change">-</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="metric">
+                    <div class="metric-content">
+                        <span class="metric-label">Active Users</span>
+                        <span class="metric-value" id="active-users">-</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="metric">
+                    <div class="metric-content">
+                        <span class="metric-label">Average Per User</span>
+                        <span class="metric-value" id="avg-per-user">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      const tableBody = document.getElementById('leaderboard').getElementsByTagName('tbody')[0];
-      tableBody.innerHTML = '';
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Daily Total Value</h2>
+            </div>
+            <div class="chart-container" id="trend-chart"></div>
+        </div>
 
-      for (let i = 0; i < leaderboardData.length; i++) {
-        const row = document.createElement('tr');
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Recent User Transactions</h2>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Daily User Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-table">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-        const idCell = document.createElement('td');
-        idCell.textContent = leaderboardData[i].id;
-        row.appendChild(idCell);
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.36.3/apexcharts.min.js"></script>
+    <script>
+        // Sample data with user IDs
+// Sample data with user IDs
+const rawTransactions = [
+    { userId: '204933F', datetime: '2024-09-27T10:00:00', amount: 10 },
+    { userId: '204933F', datetime: '2024-09-27T14:30:00', amount: 20 },
+    { userId: '204933F', datetime: '2024-09-27T16:45:00', amount: 20 },
+    { userId: '204933F', datetime: '2024-09-28T11:20:00', amount: 20 },
+    { userId: '332048F', datetime: '2024-09-23T09:15:00', amount: 20 },
+    { userId: '332048F', datetime: '2024-09-24T13:40:00', amount: 30 },
+    { userId: '304906F', datetime: '2024-09-23T15:30:00', amount: 10 },
+    { userId: '902068F', datetime: '2024-09-26T10:25:00', amount: 25 },
+    { userId: '902068F', datetime: '2024-09-26T17:50:00', amount: 40 },
 
-        const totalSentCell = document.createElement('td');
-        totalSentCell.textContent = leaderboardData[i].totalSent.toFixed(2); // Format to 2 decimal places
-        row.appendChild(totalSentCell);
+    {userId: '758943F', datetime: '2024-11-14T00:00:00', amount: 231.26},
 
-        const lastSendCell = document.createElement('td');
-        lastSendCell.textContent = leaderboardData[i].lastSend.toFixed(2); // Format to 2 decimal places
-        row.appendChild(lastSendCell);
+    // New transactions for November 10, 2024 with userId: 301906F
+    { userId: '301906F', datetime: '2024-11-10T08:30:00', amount: 6.46 },
+    { userId: '301906F', datetime: '2024-11-10T09:00:00', amount: 6.46 },
+    { userId: '301906F', datetime: '2024-11-10T10:00:00', amount: 6.46 },
+    { userId: '301906F', datetime: '2024-11-10T11:00:00', amount: 6.46 },
+    { userId: '301906F', datetime: '2024-11-10T12:00:00', amount: 6.46 },
+    { userId: '301906F', datetime: '2024-11-10T13:00:00', amount: 6.46 },
+    { userId: '301906F', datetime: '2024-11-10T14:00:00', amount: 6.46 },
+    { userId: '301906F', datetime: '2024-11-10T15:00:00', amount: 6.46 },
+    { userId: '301906F', datetime: '2024-11-10T16:00:00', amount: 6.46 },
+    { userId: '301906F', datetime: '2024-11-10T17:00:00', amount: 6.46 },
+    { userId: '301906F', datetime: '2024-11-10T18:00:00', amount: 6.46 },
+    { userId: '301906F', datetime: '2024-11-10T19:00:00', amount: 6.46 },
+    { userId: '301906F', datetime: '2024-11-10T20:00:00', amount: 6.46 },
+    { userId: '301906F', datetime: '2024-11-10T21:00:00', amount: 6.46 },
 
-        const lastSendDateCell = document.createElement('td');
-        lastSendDateCell.textContent = leaderboardData[i].lastSendDate;
-        row.appendChild(lastSendDateCell);
+    // New transactions for November 13, 2024 with userId: 301906F
+    { userId: '301906F', datetime: '2024-11-13T08:30:00', amount: 6.36 },
+    { userId: '301906F', datetime: '2024-11-13T09:00:00', amount: 6.36 },
+    { userId: '301906F', datetime: '2024-11-13T10:00:00', amount: 6.36 },
+    { userId: '301906F', datetime: '2024-11-13T11:00:00', amount: 6.36 },
+    { userId: '301906F', datetime: '2024-11-13T12:00:00', amount: 6.36 },
+    { userId: '301906F', datetime: '2024-11-13T13:00:00', amount: 6.36 },
+    { userId: '301906F', datetime: '2024-11-13T14:00:00', amount: 6.36 },
+    { userId: '301906F', datetime: '2024-11-13T15:00:00', amount: 6.36 },
+    { userId: '301906F', datetime: '2024-11-13T16:00:00', amount: 6.36 },
+    { userId: '301906F', datetime: '2024-11-13T17:00:00', amount: 6.36 },
+    { userId: '301906F', datetime: '2024-11-13T18:00:00', amount: 6.36 },
+    { userId: '301906F', datetime: '2024-11-13T19:00:00', amount: 6.36 },
+    { userId: '301906F', datetime: '2024-11-13T20:00:00', amount: 6.36 },
+    { userId: '301906F', datetime: '2024-11-13T21:00:00', amount: 6.36 },
 
-        tableBody.appendChild(row);
-      }
-    }
+    // New transactions for userId: 601055F
+    { userId: '601055F', datetime: '2024-09-28T10:00:00', amount: 20 },
+    { userId: '601055F', datetime: '2024-09-30T10:00:00', amount: 25 },
+    { userId: '601055F', datetime: '2024-09-30T11:00:00', amount: 15 },
+    { userId: '601055F', datetime: '2024-09-30T12:00:00', amount: 50 },
+    { userId: '601055F', datetime: '2024-10-09T10:00:00', amount: 25 },
+    { userId: '601055F', datetime: '2024-10-14T10:00:00', amount: 20 },
 
-    // Function to calculate and display total received
-    function updateTotalReceived() {
-      const totalReceived = leaderboardData.reduce((total, entry) => total + entry.totalSent, 0);
-      document.getElementById('totalReceived').textContent = `Total Received: ${totalReceived.toFixed(2)}`; // Format to 2 decimal places
-    }
+    // New transactions for userId: 301011F
+    { userId: '301011F', datetime: '2024-09-28T12:00:00', amount: 10 },
 
-    // Call the functions to render the leaderboard and total received
-    updateLeaderboard();
-    updateTotalReceived();
-  </script>
+    // New transactions for userId: 701028F
+    { userId: '701028F', datetime: '2024-09-26T14:00:00', amount: 15 },
+
+    // New transactions for userId: 112031F
+    { userId: '112031F', datetime: '2024-09-30T16:00:00', amount: 10 },
+
+    // New transactions for userId: 664548F
+    { userId: '664548F', datetime: '2024-09-30T17:00:00', amount: 25 },
+
+    // New transactions for userId: 102012F
+    { userId: '102012F', datetime: '2024-10-01T10:00:00', amount: 25 },
+
+    // New transactions for userId: 931025F
+    { userId: '931025F', datetime: '2024-10-03T08:00:00', amount: 18 },
+
+    // New transactions for userId: 613215F
+    { userId: '613215F', datetime: '2024-10-03T09:00:00', amount: 10 },
+
+    // **Batch of new transactions** (final batch)
+
+    // 613215F transactions on 10/3/24 (2 times)
+    { userId: '613215F', datetime: '2024-10-03T10:00:00', amount: 10 },
+    { userId: '613215F', datetime: '2024-10-03T11:00:00', amount: 10 },
+
+    // 301906F transactions on 10/3/24 (5 times of 13.12)
+    { userId: '301906F', datetime: '2024-10-03T12:00:00', amount: 13.12 },
+    { userId: '301906F', datetime: '2024-10-03T13:00:00', amount: 13.12 },
+    { userId: '301906F', datetime: '2024-10-03T14:00:00', amount: 13.12 },
+    { userId: '301906F', datetime: '2024-10-03T15:00:00', amount: 13.12 },
+    { userId: '301906F', datetime: '2024-10-03T16:00:00', amount: 13.12 },
+
+    // 301906F transactions on 10/3/24 (3 times of 19.59)
+    { userId: '301906F', datetime: '2024-10-03T17:00:00', amount: 19.59 },
+    { userId: '301906F', datetime: '2024-10-03T18:00:00', amount: 19.59 },
+    { userId: '301906F', datetime: '2024-10-03T19:00:00', amount: 19.59 },
+
+    // 301906F transactions on 10/6/24 (4 times of 13.12)
+    { userId: '301906F', datetime: '2024-10-06T08:00:00', amount: 13.12 },
+    { userId: '301906F', datetime: '2024-10-06T09:00:00', amount: 13.12 },
+    { userId: '301906F', datetime: '2024-10-06T10:00:00', amount: 13.12 },
+    { userId: '301906F', datetime: '2024-10-06T11:00:00', amount: 13.12 },
+
+    // 301906F transactions on 10/6/24 (8 times of 6.56)
+    { userId: '301906F', datetime: '2024-10-06T12:00:00', amount: 6.56 },
+    { userId: '301906F', datetime: '2024-10-06T13:00:00', amount: 6.56 },
+    { userId: '301906F', datetime: '2024-10-06T14:00:00', amount: 6.56 },
+    { userId: '301906F', datetime: '2024-10-06T15:00:00', amount: 6.56 },
+    { userId: '301906F', datetime: '2024-10-06T16:00:00', amount: 6.56 },
+    { userId: '301906F', datetime: '2024-10-06T17:00:00', amount: 6.56 },
+    { userId: '301906F', datetime: '2024-10-06T18:00:00', amount: 6.56 },
+    { userId: '301906F', datetime: '2024-10-06T19:00:00', amount: 6.56 },
+
+    // 301906F transaction on 10/6/24 (1 time of 10)
+    { userId: '301906F', datetime: '2024-10-06T20:00:00', amount: 10 }
+];
+
+
+
+        // Initialize chart
+        let chart = null;
+
+        function initChart() {
+            const options = {
+                chart: {
+                    type: 'line',
+                    height: 300,
+                    fontFamily: 'Inter, sans-serif',
+                    toolbar: {
+                        show: false
+                    },
+                    animations: {
+                        enabled: true,
+                        easing: 'easeinout',
+                        speed: 800
+                    }
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                colors: ['#2563eb'],
+                grid: {
+                    borderColor: '#e2e8f0',
+                    strokeDashArray: 4
+                },
+                markers: {
+                    size: 5,
+                    colors: ['#2563eb'],
+                    strokeColors: '#ffffff',
+                    strokeWidth: 2
+                },
+                series: [{
+                    name: 'Daily Total',
+                    data: []
+                }],
+                xaxis: {
+                    type: 'datetime',
+                    labels: {
+                        style: {
+                            colors: '#64748b',
+                            fontFamily: 'Inter, sans-serif'
+                        }
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            colors: '#64748b',
+                            fontFamily: 'Inter, sans-serif'
+                        },
+                        formatter: (value) => `$${value.toFixed(0)}`
+                    }
+                },
+                tooltip: {
+                    theme: 'light',
+                    x: {
+                        format: 'dd MMM yyyy'
+                    },
+                    y: {
+                        formatter: (value) => `$${value.toFixed(2)}`
+                    }
+                }
+            };
+
+            chart = new ApexCharts(document.querySelector("#trend-chart"), options);
+            chart.render();
+        }
+
+        function getPercentageChange(current, previous) {
+            return previous ? ((current - previous) / previous) * 100 : 0;
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(value);
+        }
+
+        function updatePeriod(period) {
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter and aggregate data
+            const filteredData = filterTransactionsByPeriod(rawTransactions, period);
+            const aggregatedData = aggregateByDate(filteredData);
+            
+            // Update chart
+            const seriesData = aggregatedData.map(day => ({
+                x: new Date(day.date).getTime(),
+                y: day.totalValue
+            }));
+
+            chart.updateSeries([{
+                name: 'Daily Total',
+                data: seriesData
+            }]);
+
+            // Calculate metrics
+            const latestDay = aggregatedData[aggregatedData.length - 1];
+            const previousDay = aggregatedData[aggregatedData.length - 2];
+            const dailyChange = getPercentageChange(latestDay?.totalValue || 0, previousDay?.totalValue || 0);
+            
+            // Get unique users in the period
+            const uniqueUsers = new Set(filteredData.map(tx => tx.userId));
+            const avgPerUser = filteredData.reduce((sum, tx) => sum + tx.amount, 0) / uniqueUsers.size;
+
+            // Update metrics
+            document.getElementById('daily-total').textContent = formatCurrency(latestDay?.totalValue || 0);
+            document.getElementById('active-users').textContent = uniqueUsers.size;
+            document.getElementById('avg-per-user').textContent = formatCurrency(avgPerUser);
+
+            // Update daily change indicator
+            const changeElement = document.getElementById('daily-change');
+            changeElement.textContent = `${dailyChange >= 0 ? '+' : ''}${dailyChange.toFixed(1)}%`;
+            changeElement.className = `metric-change ${dailyChange >= 0 ? 'positive' : 'negative'}`;
+
+            // Update transactions table
+            updateTransactionsTable(filteredData);
+        }
+
+        function updateTransactionsTable(transactions) {
+            const tableBody = document.getElementById('transactions-table');
+            tableBody.innerHTML = '';
+            
+            // Group transactions by user and date
+            const groupedTransactions = transactions.reduce((acc, tx) => {
+                const date = tx.datetime.split('T')[0];
+                const key = `${tx.userId}-${date}`;
+                if (!acc[key]) {
+                    acc[key] = {
+                        userId: tx.userId,
+                        date: date,
+                        transactions: [],
+                        dailyTotal: 0
+                    };
+                }
+                acc[key].transactions.push(tx);
+                acc[key].dailyTotal += tx.amount;
+                return acc;
+            }, {});
+
+            // Sort by date (newest first) and create table rows
+            Object.values(groupedTransactions)
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .forEach(group => {
+                    group.transactions.forEach(tx => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><span class="badge user-id">${tx.userId}</span></td>
+                            <td>${new Date(tx.datetime).toLocaleDateString()}</td>
+                            <td>${formatCurrency(tx.amount)}</td>
+                            <td>${formatCurrency(group.dailyTotal)}</td>                        `;
+                        tableBody.appendChild(row);
+                    });
+                });
+        }
+
+        function filterTransactionsByPeriod(transactions, period) {
+            const now = new Date();
+            let cutoffDate;
+
+            switch (period) {
+                case '7d':
+                    cutoffDate = new Date(now);
+                    cutoffDate.setDate(now.getDate() - 7);
+                    break;
+                case '30d':
+                    cutoffDate = new Date(now);
+                    cutoffDate.setDate(now.getDate() - 30);
+                    break;
+                case '1y':
+                    cutoffDate = new Date(now);
+                    cutoffDate.setFullYear(now.getFullYear() - 1);
+                    break;
+                default:
+                    cutoffDate = new Date(0); // No filtering, return all
+            }
+
+            return transactions.filter(tx => new Date(tx.datetime) >= cutoffDate);
+        }
+
+        function aggregateByDate(transactions) {
+            const aggregated = transactions.reduce((acc, tx) => {
+                const date = tx.datetime.split('T')[0]; // Extract date
+                if (!acc[date]) {
+                    acc[date] = {
+                        date,
+                        totalValue: 0,
+                        categories: {}
+                    };
+                }
+                acc[date].totalValue += tx.amount;
+                acc[date].categories[tx.category] = (acc[date].categories[tx.category] || 0) + tx.amount;
+                return acc;
+            }, {});
+
+            return Object.values(aggregated)
+                .sort((a, b) => a.date.localeCompare(b.date)); // Sort by date
+        }
+
+        function dismissAlert() {
+            document.getElementById('feature-alert').style.display = 'none';
+        }
+
+        // Initialize the page on load
+        window.addEventListener('load', () => {
+            initChart();
+            updatePeriod('7d');  // Initialize with 7 days as default period
+        });
+    </script>
 </body>
 </html>
