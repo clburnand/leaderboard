@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User-Based Financial Analytics</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/inter-ui/3.19.3/inter.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.36.3/apexcharts.min.css">
-    <style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User-Based Financial Analytics</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/inter-ui/3.19.3/inter.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.36.3/apexcharts.min.css">
+  <style>
         /* All existing styles remain the same */
         :root {
             --primary: #2563eb;
@@ -204,80 +204,70 @@
                 font-size: 1.5rem;
             }
         }
-    </style>
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="tab-group">
-                <button class="tab active" onclick="updatePeriod('7d')">7D</button>
-                <button class="tab" onclick="updatePeriod('30d')">30D</button>
-                <button class="tab" onclick="updatePeriod('1y')">1Y</button>
-            </div>
-        </header>
-
-
-        <div class="grid">
-            <div class="card">
-                <div class="metric">
-                    <div class="metric-content">
-                        <span class="metric-label">Daily Total</span>
-                        <span class="metric-value" id="daily-total">-</span>
-                    </div>
-                    <span class="metric-change" id="daily-change">-</span>
-                </div>
-            </div>
-            <div class="card">
-                <div class="metric">
-                    <div class="metric-content">
-                        <span class="metric-label">Active Users</span>
-                        <span class="metric-value" id="active-users">-</span>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="metric">
-                    <div class="metric-content">
-                        <span class="metric-label">Average Per User</span>
-                        <span class="metric-value" id="avg-per-user">-</span>
-                    </div>
-                </div>
-            </div>
+  <div class="container">
+    <header class="header">
+      <div class="tab-group">
+        <button class="tab active" onclick="updatePeriod('7d')">7D</button> <button class="tab" onclick="updatePeriod('30d')">30D</button> <button class="tab" onclick="updatePeriod('1y')">1Y</button>
+      </div>
+    </header>
+    <div class="grid">
+      <div class="card">
+        <div class="metric">
+          <div class="metric-content">
+            <span class="metric-label">Daily Total</span> <span class="metric-value" id="daily-total">-</span>
+          </div><span class="metric-change" id="daily-change">-</span>
         </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Daily Total Value</h2>
-            </div>
-            <div class="chart-container" id="trend-chart"></div>
+      </div>
+      <div class="card">
+        <div class="metric">
+          <div class="metric-content">
+            <span class="metric-label">Active Users</span> <span class="metric-value" id="active-users">-</span>
+          </div>
         </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Recent User Transactions</h2>
-            </div>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>User ID</th>
-                            <th>Date</th>
-                            <th>Amount</th>
-                            <th>Daily User Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transactions-table">
-                    </tbody>
-                </table>
-            </div>
+      </div>
+      <div class="card">
+        <div class="metric">
+          <div class="metric-content">
+            <span class="metric-label">Average Per User</span> <span class="metric-value" id="avg-per-user">-</span>
+          </div>
         </div>
+      </div>
     </div>
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Daily Total Value</h2>
+      </div>
+      <div class="chart-container" id="trend-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Recent User Transactions</h2>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Daily User Total</th>
+            </tr>
+          </thead>
+          <tbody id="transactions-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.36.3/apexcharts.min.js"></script> 
+  <script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.36.3/apexcharts.min.js"></script>
-    <script>
+
         // Sample data with user IDs
-// Sample data with user IDs
-const rawTransactions = [
+  // Sample data with user IDs
+  const rawTransactions = [
     { userId: '204933F', datetime: '2024-09-27T10:00:00', amount: 10 },
     { userId: '204933F', datetime: '2024-09-27T14:30:00', amount: 20 },
     { userId: '204933F', datetime: '2024-09-27T16:45:00', amount: 20 },
@@ -505,7 +495,7 @@ const rawTransactions = [
 
     { userId: '301906F', datetime: '2024-10-06T20:00:00', amount: 10 }
    
-];
+  ];
 
 
 
@@ -723,6 +713,6 @@ const rawTransactions = [
             initChart();
             updatePeriod('7d');  // Initialize with 7 days as default period
         });
-    </script>
+  </script>
 </body>
 </html>
